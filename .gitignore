@@ -169,3 +169,7 @@ cython_debug/
 
 # PyPI configuration file
 .pypirc
+
+# arquivos do projeto
+bitcoin_data.db
+prophet_model.pkl

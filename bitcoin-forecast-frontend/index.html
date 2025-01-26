@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bitcoin Forecast</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Bitcoin Forecast</h1>
+
+        <h2>Coletar Dados</h2>
+        <label for="symbol">Símbolo:</label>
+        <input type="text" id="symbol" value="BTC/USDT">
+        
+        <label for="exchange">Exchange:</label>
+        <input type="text" id="exchange" value="binance">
+
+        <label for="timeframe">Timeframe:</label>
+        <input type="text" id="timeframe" value="1d">
+
+        <label for="limit">Limite:</label>
+        <input type="number" id="limit" value="2000">
+
+        <button onclick="fetchData()">Coletar Dados</button>
+
+        <h2>Treinar Modelo</h2>
+        <button onclick="trainModel()">Treinar Modelo</button>
+
+        <h2>Fazer Previsão</h2>
+        <label for="targetProfit">Lucro Alvo (%):</label>
+        <input type="number" id="targetProfit" value="10">
+
+        <label for="maxDays">Máximo de Dias:</label>
+        <input type="number" id="maxDays" value="365">
+
+        <button onclick="predictProfit()">Prever Dias</button>
+
+        <h3>Resultado:</h3>
+        <div id="result"></div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>

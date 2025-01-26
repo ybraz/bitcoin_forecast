@@ -1,5 +1,3 @@
-Esse é o readme que precisa ser atualizado:
-
 # API de Previsão de Preços de Bitcoin com Prophet
 
 Esta API permite a coleta de dados históricos de preços do Bitcoin, o treinamento de um modelo de previsão utilizando o Prophet e a realização de previsões para estimar o tempo necessário para atingir uma meta de lucro percentual.

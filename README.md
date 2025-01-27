@@ -6,15 +6,16 @@ Esta API permite a coleta de dados históricos de preços do Bitcoin, o treiname
 
 1. **Coleta de Dados**  
    - Obtém dados históricos de preços de Bitcoin de uma exchange e os armazena localmente em um banco de dados SQLite.
-   
-2. **Validação de Dados**  
-   - Verifica os dados armazenados para garantir que estejam corretos e completos.
+   - O banco de dados é automaticamente limpo antes de cada nova coleta de dados.
 
-3. **Treinamento do Modelo**  
+2. **Treinamento do Modelo**  
    - Treina um modelo de previsão Prophet usando os dados coletados.
 
-4. **Previsão de Lucro-Alvo**  
+3. **Previsão de Lucro-Alvo**  
    - Estima quantos dias serão necessários para atingir uma meta de lucro percentual especificada.
+
+4. **Coleta Completa de Dados**  
+   - Permite baixar todo o histórico de preços disponível na Binance desde 2017.
 
 ---
 
@@ -46,59 +47,38 @@ Antes de iniciar, instale as dependências necessárias com o seguinte comando:
 
 ### 1. Coletar dados e inserir no banco de dados
 
-Este endpoint coleta dados de preços históricos de Bitcoin de uma exchange e os armazena no banco de dados local.
+Este endpoint coleta dados de preços históricos de Bitcoin de uma exchange e os armazena no banco de dados local. O banco de dados será automaticamente **limpo antes da coleta** para evitar duplicação de dados.
 
 - **Método:** `POST`  
 - **URL:** `/fetch-data`  
 - **Parâmetros:**  
   - `symbol` (string): Par de negociação (ex: `BTC/USDT`)
-  - `exchange_name` (string): Nome da exchange (ex: `binance`)
   - `timeframe` (string): Intervalo de tempo dos dados (ex: `1d`, `1h`)
-  - `limit` (int): Quantidade de registros a serem coletados (ex: `2000`)
+  - `limit` (int): Quantidade de registros a serem coletados (ex: `1000`)
+  - `fetch_all` (bool): Se verdadeiro, coleta todos os dados disponíveis desde 2017.
 
-**Exemplo de requisição via cURL:**
+**Exemplo de requisição via cURL (coletando dados limitados):**
 
-> curl -X POST "http://127.0.0.1:8000/fetch-data?symbol=BTC/USDT&exchange_name=binance&timeframe=1d&limit=2000"
+> curl -X POST "http://127.0.0.1:8000/fetch-data" \
+>   -H "Content-Type: application/json" \
+>   -d '{"symbol": "BTC/USDT", "timeframe": "1d", "limit": 1000, "fetch_all": false}'
+
+**Exemplo de requisição via cURL (coletando todos os dados históricos):**
+
+> curl -X POST "http://127.0.0.1:8000/fetch-data" \
+>   -H "Content-Type: application/json" \
+>   -d '{"symbol": "BTC/USDT", "timeframe": "1d", "fetch_all": true}'
 
 **Resposta esperada:**
 
 > {
 >   "status": "OK",
->   "rows_inserted": 2000
+>   "rows_inserted": 3650
 > }
 
 ---
 
-### 2. Validar dados coletados
-
-Este endpoint retorna um resumo dos dados armazenados no banco de dados, mostrando as primeiras e últimas linhas disponíveis.
-
-- **Método:** `GET`  
-- **URL:** `/validate-data`  
-- **Parâmetros:**  
-  - `limit` (int): Número de registros a serem exibidos (padrão: `5`)
-
-**Exemplo de requisição via cURL:**
-
-> curl -X GET "http://127.0.0.1:8000/validate-data?limit=5"
-
-**Resposta esperada:**
-
-> {
->   "total_rows": 2000,
->   "head": [
->     {"timestamp": "2024-01-01 00:00:00", "close": 45000.0},
->     {"timestamp": "2024-01-02 00:00:00", "close": 45500.0}
->   ],
->   "tail": [
->     {"timestamp": "2024-01-09 00:00:00", "close": 47000.0},
->     {"timestamp": "2024-01-10 00:00:00", "close": 47200.0}
->   ]
-> }
-
----
-
-### 3. Treinar o modelo
+### 2. Treinar o modelo
 
 Este endpoint treina um modelo Prophet com os dados disponíveis no banco de dados.
 
@@ -121,7 +101,7 @@ Este endpoint treina um modelo Prophet com os dados disponíveis no banco de dad
 
 ---
 
-### 4. Fazer previsões para atingir um lucro-alvo
+### 3. Fazer previsões para atingir um lucro-alvo
 
 Este endpoint utiliza o modelo Prophet para prever em quantos dias o preço do Bitcoin atingirá um lucro percentual especificado.
 
@@ -149,9 +129,21 @@ Este endpoint utiliza o modelo Prophet para prever em quantos dias o preço do B
 
 ## Observações
 
-- Certifique-se de coletar novos dados antes de treinar o modelo para melhorar a precisão.
+- O banco de dados é automaticamente limpo antes da coleta de dados para garantir previsões consistentes.
+- O treinamento do modelo deve ser realizado após cada nova coleta de dados para garantir previsões mais precisas.
 - A previsão se baseia em dados históricos e não garante exatidão em cenários futuros.
-- Este projeto pode ser facilmente expandido para suportar outros ativos além do Bitcoin.
+- O projeto pode ser facilmente expandido para suportar outros ativos além do Bitcoin.
+
+---
+
+## Interface Web
+
+Este projeto inclui uma interface web simples para interação com a API, localizada nos arquivos:
+
+- `index.html` → Interface de usuário para coletar dados, treinar modelo e fazer previsões.
+- `script.js` → Contém as funções de interação com a API via AJAX.
+
+Para utilizar a interface web, basta abrir o arquivo `index.html` em um navegador e preencher os campos necessários.
 
 ---
 

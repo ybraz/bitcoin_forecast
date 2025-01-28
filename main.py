@@ -14,6 +14,7 @@ from prophet import Prophet
 # -------------------------------------------------------------
 DATABASE_FILE = "bitcoin_data.db"
 MODEL_FILE = "prophet_model.pkl"
+SECRET = "abc123"
 
 app = FastAPI(
     title="API de Previsão BTC com Prophet",
